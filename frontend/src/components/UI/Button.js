@@ -10,14 +10,15 @@ const Button = ({
   type = 'button',
   className = ''
 }) => {
-  const baseClasses = "font-semibold rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 transition-all duration-150 disabled:cursor-not-allowed disabled:opacity-50";
+  const baseClasses = "font-semibold rounded-lg shadow-light focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-white transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50";
   
   const variants = {
-    primary: "bg-indigo-600 text-white hover:bg-indigo-500 focus:ring-indigo-500 disabled:bg-indigo-400",
-    secondary: "bg-gray-600 text-white hover:bg-gray-500 focus:ring-gray-500 disabled:bg-gray-400",
-    danger: "bg-red-600 text-white hover:bg-red-500 focus:ring-red-500 disabled:bg-red-400",
-    success: "bg-green-600 text-white hover:bg-green-500 focus:ring-green-500 disabled:bg-green-400",
-    outline: "border border-gray-600 text-gray-300 hover:bg-gray-700 focus:ring-gray-500",
+    primary: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500 disabled:bg-blue-300 shadow-light-md hover:shadow-light-lg",
+    secondary: "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-400",
+    danger: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500 disabled:bg-red-300 shadow-light-md hover:shadow-light-lg",
+    success: "bg-green-600 text-white hover:bg-green-700 focus:ring-green-500 disabled:bg-green-300 shadow-light-md hover:shadow-light-lg",
+    outline: "border border-gray-300 text-gray-700 hover:bg-gray-50 focus:ring-blue-500 disabled:text-gray-400 disabled:border-gray-200",
+    ghost: "text-gray-600 hover:text-gray-900 hover:bg-gray-100 focus:ring-blue-500 disabled:text-gray-400",
   };
 
   const sizes = {

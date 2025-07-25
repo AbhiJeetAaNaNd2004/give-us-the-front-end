@@ -4,12 +4,14 @@ import Navigation from './Navigation';
 
 const Layout = ({ children, title, subtitle }) => {
   return (
-    <div className="bg-gray-900 text-white min-h-screen">
+    <div className="bg-gray-50 text-gray-900 min-h-screen">
       <Header title={title} subtitle={subtitle} />
       <div className="flex">
         <Navigation />
-        <main className="flex-1 p-6">
-          {children}
+        <main className="flex-1 p-6 bg-gray-50">
+          <div className="max-w-7xl mx-auto">
+            {children}
+          </div>
         </main>
       </div>
     </div>
