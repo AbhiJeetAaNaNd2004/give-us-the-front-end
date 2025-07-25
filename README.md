@@ -1,506 +1,614 @@
-# Face Recognition Attendance System
+# 🎯 Face Recognition System
 
-A comprehensive real-time face recognition attendance system with role-based access control, built with FastAPI backend and React frontend. The system provides automated attendance tracking through camera-based face recognition, live video streaming, and comprehensive user management.
+A comprehensive real-time face recognition and attendance management system with multi-camera support, role-based access control, and live video streaming capabilities.
 
-## 🏗️ System Architecture
+## 📋 **Project Overview**
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                    Face Recognition System                      │
-├─────────────────────────────────────────────────────────────────┤
-│  Frontend (React)           │  Backend (FastAPI)                │
-│  ├── Employee Dashboard     │  ├── Authentication API           │
-│  ├── Admin Dashboard        │  ├── User Management API          │
-│  ├── Super Admin Dashboard  │  ├── Face Recognition Engine      │
-│  ├── Live Video Streaming   │  ├── Camera Management API        │
-│  ├── Attendance Management  │  ├── WebSocket Video Streaming    │
-│  └── Role-based Access      │  └── Real-time Tracking System    │
-├─────────────────────────────────────────────────────────────────┤
-│  Database (PostgreSQL)      │  AI/ML Components                 │
-│  ├── Users & Roles          │  ├── InsightFace (Face Analysis)  │
-│  ├── Face Embeddings        │  ├── FAISS (Vector Search)        │
-│  ├── Attendance Records     │  ├── ByteTracker (Object Tracking)│
-│  ├── Camera Configuration   │  ├── OpenCV (Computer Vision)     │
-│  └── System Settings        │  └── PyTorch (Deep Learning)      │
-└─────────────────────────────────────────────────────────────────┘
-```
+This system combines a powerful **FastAPI backend** with a modern **React frontend** to deliver enterprise-grade face recognition capabilities. It processes multiple camera streams simultaneously, provides real-time attendance tracking, and offers intuitive dashboards for different user roles.
 
-## 🚀 Key Features
+### 🎥 **Core Capabilities**
+- **Real-time face recognition** across multiple camera feeds
+- **Automated attendance tracking** with check-in/check-out detection
+- **Live video streaming** with WebSocket connections
+- **Multi-camera viewing** (1, 2, or 4 feeds simultaneously)
+- **Role-based access control** (Employee, Admin, Super Admin)
+- **Face enrollment and management** system
+- **Camera and tripwire configuration** tools
+- **System monitoring and control** dashboards
 
-### 🎯 Core Functionality
-- **Real-time Face Recognition**: Advanced AI-powered face detection and recognition
-- **Automated Attendance Tracking**: Seamless check-in/check-out via face recognition
-- **Multi-Camera Support**: Simultaneous processing from multiple camera sources
-- **Live Video Streaming**: Real-time WebSocket-based video feeds with annotations
-- **Role-Based Access Control**: Three-tier access system (Employee, Admin, Super Admin)
+---
 
-### 🔐 Security & Authentication
-- **JWT Authentication**: Secure token-based authentication system
-- **Password Hashing**: BCrypt-based secure password storage
-- **Role-Based Permissions**: Granular access control based on user roles
-- **Protected Routes**: Frontend and backend route protection
+## 🏗️ **System Architecture**
 
-### 📊 Management Features
-- **User Management**: Complete CRUD operations for user accounts
-- **Face Enrollment**: Upload and manage face embeddings for recognition
-- **Camera Configuration**: Dynamic camera setup and tripwire management
-- **System Control**: Start/stop tracking pipeline and individual cameras
-- **Attendance Analytics**: Comprehensive attendance reporting and statistics
-
-### 🎨 User Interface
-- **Responsive Design**: Mobile-first, cross-device compatibility
-- **Modern Dark Theme**: Professional UI with excellent UX
-- **Real-time Updates**: Live data synchronization across all components
-- **Interactive Dashboards**: Role-specific interfaces with relevant features
-
-## 🛠️ Technology Stack
-
-### Backend (FastAPI)
-- **Framework**: FastAPI 0.116.1 with async/await support
-- **Database**: PostgreSQL with SQLAlchemy ORM
-- **Authentication**: JWT tokens with OAuth2 password flow
-- **AI/ML Stack**:
-  - InsightFace 0.7.3 - Face analysis and recognition
-  - FAISS 1.7.4 - Efficient similarity search
-  - ByteTracker 0.3.2 - Multi-object tracking
-  - OpenCV 4.11.0 - Computer vision operations
-  - PyTorch 1.13.0 - Deep learning framework
+### **Backend Stack**
+- **Framework**: FastAPI 0.104+ with Python 3.8+
+- **Database**: PostgreSQL 13+
+- **Authentication**: JWT tokens with role-based access
+- **Face Recognition**: InsightFace with GPU acceleration
+- **Video Processing**: OpenCV with multi-threading
 - **WebSocket**: Real-time video streaming
-- **HTTP Client**: Requests with retry mechanisms
 
-### Frontend (React)
-- **Framework**: React 19.1.0 with modern hooks
-- **HTTP Client**: Axios 1.11.0 for API communication
-- **Routing**: React Router DOM 7.7.0 with hash-based routing
-- **Styling**: Tailwind CSS utility-first framework
-- **WebSocket**: Native WebSocket API for live streaming
-- **State Management**: React Context API
+### **Frontend Stack**
+- **Framework**: React 19.1.0 with functional components
+- **Routing**: React Router DOM 6.x
+- **Styling**: Tailwind CSS 4.x
+- **HTTP Client**: Native Fetch API (no external libraries)
+- **WebSocket**: Native WebSocket API
+- **State Management**: React Hooks (useState, useEffect)
 
-### Database Schema
-- **Users Table**: Employee information and credentials
-- **Roles Table**: Role definitions and permissions
-- **Face Embeddings**: Biometric data storage
-- **Attendance Records**: Check-in/check-out logs
-- **Cameras Table**: Camera configurations and settings
-- **Departments Table**: Organizational structure
+---
 
-## 📦 Installation & Setup
+## 👥 **Role-Based Features**
 
-### Prerequisites
+### 🟢 **Employee Dashboard**
+**Access Level**: Basic User
+- ✅ **Personal Attendance**: View own attendance logs and history
+- ✅ **Current Status**: Real-time check-in/check-out status display
+- ✅ **Profile Picture**: Automatic display from enrolled face images
+- ✅ **Activity Summary**: Personal attendance statistics
+
+**Example Status Display**:
+```
+Status: Checked In (at 10:45 AM)
+Last Activity: 2 hours ago
+Today's Hours: 6h 23m
+```
+
+### 🟡 **Admin Dashboard**
+**Access Level**: Employee + Admin Features
+- ✅ **All Employee Features**
+- ✅ **User Management**: Create/delete employee accounts
+- ✅ **Face Enrollment**: Upload and manage face images (3-5 per user)
+- ✅ **System Statistics**: Total employees, active cameras count
+- ✅ **Activity Monitoring**: View all users' attendance logs
+- ✅ **Live Video Feed**: Single camera viewing with annotations
+- ✅ **Profile Management**: View user profiles with face image counts
+
+**Dashboard Widgets**:
+- Total Employees: 47 users
+- Active Cameras: 3 of 5 running
+- Today's Check-ins: 42 employees
+- Recent Activity: Live feed
+
+### 🔴 **Super Admin Dashboard**
+**Access Level**: Full System Control
+- ✅ **All Admin Features**
+- ✅ **Tracker Control**: Start/stop global face recognition service
+- ✅ **Camera Management**: Add, configure, and delete cameras
+- ✅ **Individual Camera Control**: Start/stop specific camera feeds
+- ✅ **Multi-Camera Viewing**: View 1, 2, or 4 feeds simultaneously
+- ✅ **Tripwire Configuration**: Set up detection zones and boundaries
+- ✅ **User Role Management**: Create admin accounts, change user roles
+- ✅ **System Settings**: View recognition thresholds and parameters
+
+**Advanced Controls**:
+```
+🟢 Tracker Service: Running
+📹 Camera Status: 3/5 Active
+⚙️ Recognition Threshold: 0.75
+🎯 Tripwires: 8 configured
+👥 Admin Users: 3 active
+```
+
+---
+
+## 🚀 **Quick Start Guide**
+
+### **Prerequisites**
 - **Python 3.8+** with pip
 - **Node.js 16+** with npm
-- **PostgreSQL 12+** database server
-- **CUDA-compatible GPU** (recommended for optimal performance)
-- **Webcam/IP Cameras** for face recognition
+- **PostgreSQL 13+** database server
+- **GPU support** (optional, for better performance)
 
-### Backend Setup
+### **1. Backend Setup**
 
-1. **Navigate to backend directory**:
-   ```bash
-   cd backend
-   ```
+```bash
+# Navigate to backend directory
+cd backend
 
-2. **Create virtual environment**:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   ```
+# Create and activate virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-3. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
+# Install dependencies
+pip install -r requirements.txt
 
-4. **Database Configuration**:
-   - Install PostgreSQL and create database
-   - Update connection settings in `db/db_setup.py`:
-   ```python
-   DB_SETTINGS = {
-       "dbname": "face_recognition_db",
-       "user": "postgres", 
-       "password": "your_password",
-       "host": "localhost",
-       "port": "5432"
-   }
-   ```
+# Configure database (update DB_SETTINGS in db/db_utils.py)
+# Default: postgresql://postgres:password@localhost:5432/face_recognition_db
 
-5. **Initialize Database**:
-   ```bash
-   python db/db_setup.py
-   ```
+# Run database migrations
+python scripts/init_db.py
 
-6. **Configure System Settings**:
-   - Update `config.json` with your camera and API settings
-   - Set up known faces directory path
-   - Configure recognition thresholds
+# Start the FastAPI server
+python main.py
+# Server runs on: http://localhost:8000
+```
 
-7. **Start Backend Server**:
-   ```bash
-   python main.py
-   ```
-   Server will run on `http://localhost:8000`
+### **2. Frontend Setup**
 
-### Frontend Setup
+```bash
+# Navigate to frontend directory
+cd frontend
 
-1. **Navigate to frontend directory**:
-   ```bash
-   cd frontend
-   ```
+# Install dependencies
+npm install
 
-2. **Install dependencies**:
-   ```bash
-   npm install
-   ```
+# Start the React development server
+npm start
+# Application runs on: http://localhost:3000
+```
 
-3. **Configure API Base URL**:
-   - Update `src/services/api.js` if backend runs on different host/port
+### **3. Access the System**
 
-4. **Start Development Server**:
-   ```bash
-   npm start
-   ```
-   Application will open on `http://localhost:3000`
+1. **Open browser**: Navigate to `http://localhost:3000`
+2. **Login**: Use your credentials (default admin setup required)
+3. **Dashboard**: Access role-appropriate features
 
-5. **Build for Production**:
-   ```bash
-   npm run build
-   ```
+---
 
-## 🔧 Configuration
+## 📡 **API Documentation**
 
-### Backend Configuration (`config.json`)
+### **Authentication**
+```http
+POST /auth/token
+Content-Type: application/x-www-form-urlencoded
 
+username=your_username&password=your_password
+```
+
+**Response**:
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "bearer",
+  "role": "admin"
+}
+```
+
+### **Employee Endpoints**
+```http
+GET /employee/me/attendance          # Personal attendance logs
+GET /employee/me/status              # Current check-in status
+```
+
+### **Admin Endpoints**
+```http
+GET /superadmin/users                # List all users
+POST /admin/users/create/employee    # Create employee account
+POST /admin/faces/enroll/{user_id}   # Enroll face images (3-5 files)
+GET /admin/faces/{user_id}           # Get user's face images
+DELETE /admin/faces/{embedding_id}   # Delete specific face embedding
+```
+
+### **Super Admin Endpoints**
+```http
+POST /superadmin/tracker/start       # Start recognition service
+POST /superadmin/tracker/stop        # Stop recognition service
+GET /superadmin/tracker/status       # Get service status
+
+POST /superadmin/cameras/{id}/start  # Start individual camera
+POST /superadmin/cameras/{id}/stop   # Stop individual camera
+
+POST /superadmin/cameras             # Create new camera
+PUT /superadmin/cameras/{id}         # Update camera config
+DELETE /superadmin/cameras/{id}      # Delete camera
+```
+
+### **WebSocket Streaming**
+```javascript
+// Connect to live video feed
+const ws = new WebSocket('ws://localhost:8000/ws/video_feed/1?token=YOUR_JWT_TOKEN');
+
+ws.onmessage = (event) => {
+  const frameData = event.data; // Base64 encoded image
+  displayFrame(`data:image/jpeg;base64,${frameData}`);
+};
+```
+
+---
+
+## 🎬 **Multi-Camera Viewing**
+
+### **Layout Options**
+- **Single View**: Full-screen single camera feed
+- **Split View**: Two cameras side-by-side
+- **Quad View**: 2x2 grid with four camera feeds
+
+### **Implementation**
+```javascript
+// React state structure for multi-feed
+const [feedConfig, setFeedConfig] = useState({
+  layout: 'quad', // 'single', 'split', 'quad'
+  feeds: [
+    { id: 1, cameraId: 1, connected: true },
+    { id: 2, cameraId: 3, connected: true },
+    { id: 3, cameraId: 5, connected: false },
+    { id: 4, cameraId: null, connected: false },
+  ]
+});
+
+// Each feed maintains its own WebSocket connection
+const connectToCamera = (feedId, cameraId) => {
+  const token = getAuthToken();
+  const ws = new WebSocket(`ws://localhost:8000/ws/video_feed/${cameraId}?token=${token}`);
+  
+  ws.onmessage = (event) => {
+    updateFeedFrame(feedId, event.data);
+  };
+};
+```
+
+### **Features**
+- ✅ **Concurrent Connections**: Multiple WebSocket streams
+- ✅ **Dynamic Camera Selection**: Change cameras per feed slot
+- ✅ **Layout Switching**: Change view layouts on-the-fly
+- ✅ **Connection Management**: Auto-reconnection on failure
+- ✅ **Performance Optimized**: Efficient frame handling
+
+---
+
+## 👤 **Profile Picture System**
+
+### **Implementation**
+Profile pictures are automatically generated from enrolled face images:
+
+```javascript
+// Get user's profile picture (first enrolled face image)
+async getUserProfilePicture(userId) {
+  try {
+    const faces = await apiService.getUserFaces(userId);
+    if (faces && faces.length > 0) {
+      // Convert bytes to base64 for display
+      const imageBytes = faces[0].source_image;
+      return `data:image/jpeg;base64,${btoa(String.fromCharCode(...imageBytes))}`;
+    }
+    return null; // Use default avatar
+  } catch (error) {
+    return null;
+  }
+}
+```
+
+### **Display Locations**
+- Employee dashboard header
+- User management tables
+- Attendance logs
+- Profile pages
+
+---
+
+## 🔧 **Configuration**
+
+### **Backend Configuration**
+Edit `backend/config.json`:
 ```json
 {
   "api": {
-    "base_url": "https://your-api-endpoint.com",
-    "access_token": "your-api-token",
-    "timeout": 10,
-    "max_retries": 3
-  },
-  "paths": {
-    "known_faces_dir": "/path/to/known/faces",
-    "attendance_log": "attendance_log.csv"
-  },
-  "tuning": {
-    "recognition_threshold": 0.6,
-    "detection_threshold": 0.5,
-    "match_threshold": 0.8,
-    "face_quality_threshold": 0.65
-  },
-  "system": {
-    "auto_detect_cameras": true,
-    "default_gpu_id": 0,
-    "default_fps": 15
+    "recognition_threshold": 0.75,
+    "max_concurrent_streams": 10,
+    "frame_rate": 30,
+    "gpu_enabled": true
   },
   "cameras": [
     {
-      "camera_id": 0,
-      "gpu_id": 0,
-      "camera_type": "entry",
-      "resolution": [640, 480],
-      "fps": 15,
-      "tripwires": [...]
+      "id": 1,
+      "name": "Main Entrance",
+      "stream_url": "rtsp://192.168.1.100:554/stream",
+      "tripwires": [
+        {
+          "name": "Entry Line",
+          "direction": "horizontal",
+          "position": 0.5
+        }
+      ]
     }
   ]
 }
 ```
 
-### Frontend Configuration
-
-- **API Base URL**: Update in `src/services/api.js`
-- **WebSocket URL**: Configured automatically based on API URL
-- **Authentication**: JWT tokens stored in localStorage
-
-## 👥 User Roles & Permissions
-
-### Employee Role
-- ✅ View personal attendance records
-- ✅ Check current attendance status
-- ✅ View personal dashboard statistics
-- ❌ Access to other users' data
-- ❌ System administration features
-
-### Admin Role
-- ✅ All Employee permissions
-- ✅ View all users and attendance records
-- ✅ Create/delete employee accounts
-- ✅ Enroll and manage face embeddings
-- ✅ Access live video streams
-- ✅ Monitor user activity status
-- ❌ System control and camera management
-
-### Super Admin Role
-- ✅ All Admin permissions
-- ✅ Create admin accounts
-- ✅ Change user roles
-- ✅ Start/stop tracking system
-- ✅ Camera management (CRUD operations)
-- ✅ Configure tripwires and detection zones
-- ✅ System monitoring and control
-
-## 🔑 Default Credentials
-
-After database initialization, use these credentials to access the system:
-
-| Role | Username | Password |
-|------|----------|----------|
-| Super Admin | superadmin | admin123 |
-| Admin | admin | admin123 |
-| Employee | employee | employee123 |
-
-**⚠️ Important**: Change default passwords immediately after first login.
-
-## 🚦 API Endpoints
-
-### Authentication
-- `POST /auth/token` - User login and JWT token generation
-- `GET /auth/me` - Get current user information
-
-### User Management
-- `GET /users` - List all users (Admin+)
-- `POST /users/create/employee` - Create employee account (Admin+)
-- `POST /users/create/admin` - Create admin account (Super Admin)
-- `PUT /users/{user_id}/role` - Change user role (Super Admin)
-- `DELETE /users/{user_id}` - Delete user account (Admin+)
-
-### Face Management
-- `POST /faces/enroll/{user_id}` - Enroll face embedding (Admin+)
-- `GET /faces/{user_id}` - Get user's face embeddings (Admin+)
-- `DELETE /faces/{embedding_id}` - Delete face embedding (Admin+)
-
-### Attendance
-- `GET /me/attendance` - Get personal attendance (All)
-- `GET /me/status` - Get personal status (All)
-- `GET /attendance` - Get all attendance records (Admin+)
-
-### Camera Management
-- `GET /cameras` - List cameras (Admin+)
-- `POST /cameras` - Create camera (Super Admin)
-- `PUT /cameras/{camera_id}` - Update camera (Super Admin)
-- `DELETE /cameras/{camera_id}` - Delete camera (Super Admin)
-- `POST /cameras/{camera_id}/start` - Start camera (Super Admin)
-- `POST /cameras/{camera_id}/stop` - Stop camera (Super Admin)
-
-### System Control
-- `POST /tracker/start` - Start tracking system (Super Admin)
-- `POST /tracker/stop` - Stop tracking system (Super Admin)
-- `GET /tracker/status` - Get system status (Super Admin)
-
-### WebSocket
-- `WS /ws/video_feed/{camera_id}` - Live video stream (Admin+)
-
-## 🎥 Camera Integration
-
-### Supported Camera Types
-- **USB Webcams**: Standard USB cameras (camera_id: 0, 1, 2...)
-- **IP Cameras**: RTSP/HTTP streams
-- **Built-in Cameras**: Laptop/device cameras
-
-### Camera Configuration
-1. **Automatic Detection**: System can auto-detect available cameras
-2. **Manual Configuration**: Define cameras in `config.json`
-3. **Dynamic Management**: Add/remove cameras via API
-4. **Tripwire Setup**: Configure detection zones and crossing lines
-
-### Face Recognition Pipeline
-1. **Frame Capture**: Continuous video frame acquisition
-2. **Face Detection**: AI-powered face detection in frames
-3. **Face Analysis**: Extract facial features and embeddings
-4. **Identity Matching**: Compare against known face database
-5. **Tracking**: Multi-object tracking across frames
-6. **Attendance Logging**: Automatic check-in/check-out recording
-
-## 📊 Performance Optimization
-
-### Backend Optimizations
-- **GPU Acceleration**: CUDA support for AI models
-- **Memory Pooling**: Efficient memory management for video processing
-- **Kalman Filtering**: Smooth tracking predictions
-- **Threading**: Parallel processing for multiple cameras
-- **Connection Pooling**: Database connection optimization
-
-### Frontend Optimizations
-- **Code Splitting**: Lazy loading of components
-- **Bundle Optimization**: Minimized JavaScript bundle (< 85KB gzipped)
-- **Efficient Re-rendering**: React hooks optimization
-- **WebSocket Management**: Automatic reconnection handling
-
-## 🔍 Monitoring & Logging
-
-### System Monitoring
-- **Real-time Status**: Track system health and performance
-- **Camera Status**: Monitor individual camera connections
-- **Recognition Accuracy**: Track face recognition success rates
-- **Attendance Statistics**: Comprehensive attendance analytics
-
-### Logging
-- **Application Logs**: Detailed system operation logs
-- **Error Tracking**: Comprehensive error logging and handling
-- **Attendance Logs**: CSV-based attendance record exports
-- **User Activity**: Track user login and system usage
-
-## 🐛 Troubleshooting
-
-### Common Issues
-
-**Backend Won't Start**:
-- Check PostgreSQL connection
-- Verify config.json exists and is valid
-- Ensure all Python dependencies are installed
-- Check camera permissions and availability
-
-**Face Recognition Not Working**:
-- Verify GPU drivers (CUDA) installation
-- Check camera permissions
-- Ensure adequate lighting conditions
-- Verify face embedding database has entries
-
-**Frontend Connection Issues**:
-- Confirm backend server is running on port 8000
-- Check CORS configuration
-- Verify WebSocket connections
-- Clear browser cache and localStorage
-
-**Database Connection Errors**:
-- Verify PostgreSQL service is running
-- Check database credentials in db_setup.py
-- Ensure database exists and is properly initialized
-- Check network connectivity
-
-### Performance Issues
-- **Slow Recognition**: Reduce camera resolution or FPS
-- **High Memory Usage**: Adjust memory pool settings
-- **Network Latency**: Optimize WebSocket buffer sizes
-- **Database Slow**: Add indexes, optimize queries
-
-## 🚀 Deployment
-
-### Development Deployment
-```bash
-# Backend
-cd backend && python main.py
-
-# Frontend  
-cd frontend && npm start
+### **Frontend Configuration**
+Update `frontend/src/services/api.js`:
+```javascript
+const API_BASE_URL = 'http://localhost:8000'; // Backend URL
 ```
 
-### Production Deployment
-
-**Backend (Docker)**:
-```dockerfile
-FROM python:3.9-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-COPY . .
-EXPOSE 8000
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+### **Database Configuration**
+Update `backend/db/db_utils.py`:
+```python
+DB_SETTINGS = {
+    "dbname": "face_recognition_db",
+    "user": "postgres", 
+    "password": "your_password",
+    "host": "localhost",
+    "port": 5432
+}
 ```
-
-**Frontend (Nginx)**:
-```dockerfile
-FROM node:16-alpine AS build
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run build
-
-FROM nginx:alpine
-COPY --from=build /app/build /usr/share/nginx/html
-EXPOSE 80
-```
-
-### Environment Variables
-```bash
-# Backend
-DATABASE_URL=postgresql://user:pass@localhost/db
-SECRET_KEY=your-secret-key
-CUDA_VISIBLE_DEVICES=0
-
-# Frontend
-REACT_APP_API_URL=http://localhost:8000
-```
-
-## 🤝 Contributing
-
-### Development Workflow
-1. **Fork** the repository
-2. **Create** feature branch (`git checkout -b feature/amazing-feature`)
-3. **Commit** changes (`git commit -m 'Add amazing feature'`)
-4. **Push** to branch (`git push origin feature/amazing-feature`)
-5. **Open** Pull Request
-
-### Code Standards
-- **Backend**: Follow PEP 8 Python style guide
-- **Frontend**: Use ESLint and Prettier for code formatting
-- **Documentation**: Update README and code comments
-- **Testing**: Add tests for new features
-
-### Development Setup
-```bash
-# Backend development
-cd backend
-pip install -r requirements.txt
-python -m pytest  # Run tests
-
-# Frontend development  
-cd frontend
-npm install
-npm test  # Run tests
-npm run lint  # Check code style
-```
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🆘 Support
-
-### Getting Help
-- **Documentation**: Check this README and code comments
-- **Issues**: Create GitHub issues for bugs and feature requests
-- **Discussions**: Use GitHub Discussions for questions
-
-### System Requirements
-- **Minimum**: 4GB RAM, dual-core CPU, integrated graphics
-- **Recommended**: 8GB+ RAM, quad-core CPU, dedicated GPU
-- **Storage**: 2GB+ free space for system and face data
-
-### Browser Support
-- **Chrome**: 90+
-- **Firefox**: 88+
-- **Safari**: 14+
-- **Edge**: 90+
-
-## 🔄 Version History
-
-### v1.0.0 - Initial Release
-- ✅ Complete face recognition system
-- ✅ Role-based authentication and authorization
-- ✅ Real-time video streaming
-- ✅ Comprehensive user and attendance management
-- ✅ Modern React frontend with responsive design
-- ✅ FastAPI backend with async support
-- ✅ PostgreSQL database integration
-- ✅ WebSocket live streaming
-- ✅ Multi-camera support
-- ✅ Production-ready deployment
-
-## 🙏 Acknowledgments
-
-- **InsightFace**: State-of-the-art face analysis toolkit
-- **FastAPI**: Modern, fast web framework for Python
-- **React**: Powerful frontend library
-- **OpenCV**: Computer vision library
-- **PostgreSQL**: Robust relational database
-- **ByteTracker**: Multi-object tracking algorithm
 
 ---
 
-**Built with ❤️ for modern attendance management**
+## 🏭 **Production Deployment**
 
-For detailed component-specific documentation, see:
-- [Backend Documentation](backend/README.md)
-- [Frontend Documentation](frontend/README.md)
+### **Backend Deployment**
+```bash
+# Install production WSGI server
+pip install gunicorn
+
+# Run with Gunicorn
+gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker -b 0.0.0.0:8000
+
+# Or with Uvicorn directly
+uvicorn main:app --host 0.0.0.0 --port 8000 --workers 4
+```
+
+### **Frontend Deployment**
+```bash
+# Build for production
+npm run build
+
+# Serve with nginx or any static file server
+# Build files will be in the 'build/' directory
+```
+
+### **Nginx Configuration**
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+
+    # Frontend (React)
+    location / {
+        root /path/to/frontend/build;
+        try_files $uri $uri/ /index.html;
+    }
+
+    # Backend API
+    location /api/ {
+        proxy_pass http://localhost:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    # WebSocket support
+    location /ws/ {
+        proxy_pass http://localhost:8000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+}
+```
+
+### **Environment Variables**
+```bash
+# Backend
+export DATABASE_URL="postgresql://user:pass@localhost/dbname"
+export SECRET_KEY="your-super-secret-key"
+export ENVIRONMENT="production"
+
+# Frontend
+export REACT_APP_API_URL="https://your-api-domain.com"
+```
+
+---
+
+## 🔍 **Troubleshooting**
+
+### **Common Issues**
+
+#### **Backend Issues**
+```bash
+# Database connection failed
+# ✅ Check PostgreSQL is running
+sudo systemctl status postgresql
+
+# ✅ Verify database credentials in db_utils.py
+# ✅ Ensure database exists
+createdb face_recognition_db
+```
+
+#### **Frontend Issues**
+```bash
+# Login fails with network error
+# ✅ Verify backend is running on port 8000
+curl http://localhost:8000/
+
+# ✅ Check CORS settings in main.py
+# ✅ Verify API_BASE_URL in api.js
+```
+
+#### **Video Streaming Issues**
+```bash
+# WebSocket connection fails
+# ✅ Check camera permissions and URLs
+# ✅ Verify JWT token is valid
+# ✅ Ensure user has admin/super_admin role
+```
+
+#### **Face Recognition Issues**
+```bash
+# No faces detected during enrollment
+# ✅ Use clear, well-lit images
+# ✅ Ensure face is clearly visible and forward-facing
+# ✅ Upload 3-5 different images per person
+```
+
+### **Performance Optimization**
+- **GPU Acceleration**: Enable CUDA for faster face processing
+- **Database Indexing**: Add indexes on frequently queried columns
+- **Caching**: Implement Redis for session and frame caching
+- **Load Balancing**: Use multiple backend instances for high load
+
+---
+
+## 🧪 **Testing**
+
+### **Backend Testing**
+```bash
+# Run API tests
+python -m pytest tests/
+
+# Test specific endpoints
+curl -X POST http://localhost:8000/auth/token \
+  -d "username=admin&password=password"
+```
+
+### **Frontend Testing**
+```bash
+# Run component tests
+npm test
+
+# Run integration tests
+npm run test:integration
+
+# Build verification
+npm run build
+```
+
+### **System Integration Testing**
+1. **Authentication Flow**: Login with different roles
+2. **Video Streaming**: Test WebSocket connections
+3. **Face Enrollment**: Upload and process images
+4. **Multi-Camera**: Test concurrent video feeds
+5. **Role Permissions**: Verify access controls
+
+---
+
+## 📊 **System Requirements**
+
+### **Minimum Requirements**
+- **CPU**: 4 cores, 2.5GHz
+- **RAM**: 8GB
+- **Storage**: 50GB SSD
+- **Network**: 100Mbps
+- **GPU**: Optional (GTX 1060 or better recommended)
+
+### **Recommended for Production**
+- **CPU**: 8+ cores, 3.0GHz+
+- **RAM**: 16GB+
+- **Storage**: 200GB+ SSD
+- **Network**: 1Gbps
+- **GPU**: RTX 3060 or better
+- **Cameras**: Up to 20 concurrent streams
+
+---
+
+## 🤝 **Contributing**
+
+### **Development Setup**
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/new-feature`
+3. Follow the coding standards:
+   - **Backend**: PEP 8 for Python
+   - **Frontend**: ESLint + Prettier for JavaScript
+4. Add tests for new features
+5. Submit a pull request
+
+### **Code Style**
+```python
+# Backend: Use type hints and docstrings
+def create_user(user_data: UserCreate) -> UserResponse:
+    """Creates a new user with the specified role."""
+    pass
+```
+
+```javascript
+// Frontend: Use functional components with hooks
+const UserManagement = () => {
+  const [users, setUsers] = useState([]);
+  // Component logic here
+};
+```
+
+---
+
+## 📄 **License**
+
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+```
+MIT License
+
+Copyright (c) 2024 Face Recognition System
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+```
+
+---
+
+## 📞 **Support & Contact**
+
+### **Documentation**
+- **API Docs**: `http://localhost:8000/docs` (Swagger UI)
+- **Integration Guide**: [INTEGRATION_ANALYSIS.md](INTEGRATION_ANALYSIS.md)
+- **Setup Guide**: [SETUP_GUIDE.md](SETUP_GUIDE.md)
+
+### **Support Channels**
+- **Issues**: GitHub Issues for bug reports
+- **Discussions**: GitHub Discussions for questions
+- **Email**: support@facerecognition.com
+
+### **Maintenance**
+- **Version**: 1.5.0
+- **Last Updated**: December 2024
+- **Maintainer**: Development Team
+- **Status**: ✅ Active Development
+
+---
+
+## 🔄 **Version History**
+
+### **v1.5.0** (Current)
+- ✅ Multi-camera viewing support
+- ✅ Enhanced role-based access control
+- ✅ Profile picture system
+- ✅ Improved WebSocket stability
+- ✅ React 19 compatibility
+
+### **v1.4.0**
+- ✅ Face enrollment system
+- ✅ Camera management UI
+- ✅ Tripwire configuration
+- ✅ System monitoring dashboard
+
+### **v1.3.0**
+- ✅ Live video streaming
+- ✅ WebSocket integration
+- ✅ Real-time attendance tracking
+
+### **v1.2.0**
+- ✅ Role-based authentication
+- ✅ Admin dashboard
+- ✅ User management system
+
+### **v1.1.0**
+- ✅ Basic face recognition
+- ✅ Employee dashboard
+- ✅ Attendance logging
+
+### **v1.0.0**
+- ✅ Initial release
+- ✅ Core system architecture
+- ✅ Database schema
+
+---
+
+## 🌟 **Acknowledgments**
+
+- **InsightFace** - Face recognition models
+- **FastAPI** - Modern Python web framework
+- **React** - Frontend user interface library
+- **Tailwind CSS** - Utility-first CSS framework
+- **PostgreSQL** - Robust database system
+- **OpenCV** - Computer vision library
+
+---
+
+**Built with ❤️ for enterprise-grade face recognition and attendance management**
