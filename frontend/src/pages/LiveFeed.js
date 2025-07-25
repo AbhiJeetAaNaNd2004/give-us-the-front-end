@@ -4,7 +4,6 @@ import Card from '../components/UI/Card';
 import Button from '../components/UI/Button';
 import LoadingSpinner from '../components/UI/LoadingSpinner';
 import apiService from '../services/api';
-import { getAuthToken } from '../utils/auth';
 import { handleApiError } from '../utils/helpers';
 
 const LiveFeed = () => {
@@ -54,15 +53,10 @@ const LiveFeed = () => {
     if (!selectedCameraId) return;
     
     disconnect(); // Close existing connection
-    
-    const token = getAuthToken();
-    if (!token) {
-      setConnectionError('No authentication token found');
-      return;
-    }
 
     try {
-      const wsUrl = `ws://localhost:8000/ws/video_feed/${selectedCameraId}?token=${token}`;
+      // With cookie-based auth, cookies are automatically sent with WebSocket connections
+      const wsUrl = `ws://localhost:8000/ws/video_feed/${selectedCameraId}`;
       ws.current = new WebSocket(wsUrl);
 
       ws.current.onopen = () => {
@@ -120,8 +114,8 @@ const LiveFeed = () => {
 
   if (loading) {
     return (
-      <Layout title="Live Video Feed" subtitle="Real-time camera streams">
-        <div className="flex justify-center py-12">
+      <Layout title="Live Video Feed" subtitle="Real-time camera streaming">
+        <div className="flex justify-center items-center h-64">
           <LoadingSpinner size="lg" />
         </div>
       </Layout>
@@ -130,133 +124,134 @@ const LiveFeed = () => {
 
   if (error) {
     return (
-      <Layout title="Live Video Feed" subtitle="Real-time camera streams">
-        <div className="bg-red-900 border border-red-700 text-red-100 px-4 py-3 rounded">
-          {error}
-        </div>
+      <Layout title="Live Video Feed" subtitle="Real-time camera streaming">
+        <Card>
+          <div className="text-center py-8">
+            <div className="text-red-400 mb-4">
+              <svg className="w-12 h-12 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <p className="text-xl font-semibold">Error Loading Cameras</p>
+              <p className="text-gray-400 mt-2">{error}</p>
+            </div>
+            <Button onClick={loadCameras}>
+              Try Again
+            </Button>
+          </div>
+        </Card>
       </Layout>
     );
   }
 
   return (
-    <Layout title="Live Video Feed" subtitle="Real-time camera streams">
-      <div className="space-y-6">
+    <Layout title="Live Video Feed" subtitle="Real-time camera streaming">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Camera Selection */}
-        <Card title="Camera Selection">
-          <div className="flex items-center space-x-4">
-            <div className="flex-1">
-              <label htmlFor="camera-select" className="block text-sm font-medium text-gray-300 mb-2">
-                Select Camera:
-              </label>
-              <select
-                id="camera-select"
-                value={selectedCameraId}
-                onChange={(e) => handleCameraChange(e.target.value)}
-                className="w-full bg-gray-700 border border-gray-600 text-white rounded-md px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-              >
-                <option value="">Select a camera...</option>
-                {cameras.map(camera => (
-                  <option key={camera.id} value={camera.id}>
-                    {camera.camera_name} (ID: {camera.id}) - {camera.status || 'Unknown'}
-                  </option>
-                ))}
-              </select>
+        <div className="lg:col-span-1">
+          <Card>
+            <h3 className="text-lg font-semibold text-indigo-400 mb-4">Camera Selection</h3>
+            
+            <div className="space-y-2">
+              {cameras.map((camera) => (
+                <button
+                  key={camera.id}
+                  onClick={() => handleCameraChange(camera.id)}
+                  className={`w-full text-left p-3 rounded-lg border transition-colors ${
+                    selectedCameraId === camera.id
+                      ? 'border-indigo-500 bg-indigo-900/20 text-indigo-300'
+                      : 'border-gray-600 hover:border-gray-500 text-gray-300'
+                  }`}
+                >
+                  <div className="font-medium">{camera.camera_name}</div>
+                  <div className="text-sm text-gray-400">Camera ID: {camera.id}</div>
+                </button>
+              ))}
             </div>
-            <div className="flex items-center space-x-2">
-              <div className={`w-3 h-3 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
-              <span className="text-sm text-gray-300">
-                {isConnected ? 'Connected' : 'Disconnected'}
-              </span>
-            </div>
-          </div>
-        </Card>
 
-        {/* Video Feed */}
-        {selectedCameraId && (
-          <Card title={`Camera: ${getSelectedCamera()?.camera_name || 'Unknown'}`}>
-            <div className="space-y-4">
+            {/* Connection Status */}
+            <div className="mt-6 p-3 rounded-lg bg-gray-800">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">Status:</span>
+                <div className={`flex items-center ${isConnected ? 'text-green-400' : 'text-red-400'}`}>
+                  <div className={`w-2 h-2 rounded-full mr-2 ${isConnected ? 'bg-green-400' : 'bg-red-400'}`}></div>
+                  <span className="text-sm">{isConnected ? 'Connected' : 'Disconnected'}</span>
+                </div>
+              </div>
               {connectionError && (
-                <div className="bg-yellow-900 border border-yellow-700 text-yellow-100 px-4 py-3 rounded">
+                <div className="mt-2 text-sm text-yellow-400">
                   {connectionError}
                 </div>
               )}
-              
-              <div className="bg-black rounded-md overflow-hidden aspect-video w-full border-2 border-gray-700">
-                {isConnected && frame ? (
-                  <img 
-                    src={`data:image/jpeg;base64,${frame}`} 
-                    alt="Live video feed" 
-                    className="w-full h-full object-contain"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center text-gray-500">
-                    <div className="text-center">
-                      {!selectedCameraId ? (
-                        <p>Please select a camera to view the live feed</p>
-                      ) : !isConnected ? (
-                        <div>
-                          <LoadingSpinner className="mb-4" />
-                          <p>Connecting to camera...</p>
-                        </div>
-                      ) : (
-                        <p>Waiting for video frame...</p>
-                      )}
-                    </div>
-                  </div>
-                )}
-              </div>
+            </div>
 
-              {selectedCameraId && (
-                <div className="flex justify-between items-center text-sm text-gray-400">
-                  <div>
-                    <p>Camera ID: {selectedCameraId}</p>
-                    <p>Status: {getSelectedCamera()?.status || 'Unknown'}</p>
-                  </div>
-                  <div className="text-right">
-                    <p>Location: {getSelectedCamera()?.location || 'N/A'}</p>
-                    <p>Resolution: {getSelectedCamera()?.resolution || 'N/A'}</p>
+            {/* Controls */}
+            <div className="mt-4 space-y-2">
+              <Button
+                onClick={connect}
+                disabled={!selectedCameraId || isConnected}
+                fullWidth
+                size="sm"
+              >
+                Connect
+              </Button>
+              <Button
+                onClick={disconnect}
+                disabled={!isConnected}
+                variant="secondary"
+                fullWidth
+                size="sm"
+              >
+                Disconnect
+              </Button>
+            </div>
+          </Card>
+        </div>
+
+        {/* Video Feed */}
+        <div className="lg:col-span-3">
+          <Card>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-indigo-400">
+                {getSelectedCamera()?.camera_name || 'Select a camera'}
+              </h3>
+              <div className={`px-3 py-1 rounded-full text-sm ${
+                isConnected ? 'bg-green-900 text-green-300' : 'bg-gray-700 text-gray-300'
+              }`}>
+                {isConnected ? 'Live' : 'Offline'}
+              </div>
+            </div>
+
+            <div className="relative bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '16/9' }}>
+              {frame ? (
+                <img
+                  src={`data:image/jpeg;base64,${frame}`}
+                  alt="Live video feed"
+                  className="w-full h-full object-contain"
+                />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-center">
+                    {isConnected ? (
+                      <>
+                        <LoadingSpinner size="lg" className="mb-4" />
+                        <p className="text-gray-400">Waiting for video stream...</p>
+                      </>
+                    ) : (
+                      <>
+                        <svg className="w-16 h-16 mx-auto mb-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                        <p className="text-gray-400">
+                          {selectedCameraId ? 'Click Connect to start streaming' : 'Select a camera to begin'}
+                        </p>
+                      </>
+                    )}
                   </div>
                 </div>
               )}
             </div>
           </Card>
-        )}
-
-        {/* Camera List */}
-        <Card title="Available Cameras">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {cameras.map(camera => (
-              <div 
-                key={camera.id} 
-                className={`p-4 rounded-md border cursor-pointer transition-colors ${
-                  selectedCameraId === camera.id 
-                    ? 'border-indigo-500 bg-indigo-900/20' 
-                    : 'border-gray-600 hover:border-gray-500'
-                }`}
-                onClick={() => handleCameraChange(camera.id)}
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-medium text-white">{camera.camera_name}</h4>
-                  <span className={`px-2 py-1 rounded-full text-xs ${
-                    camera.status === 'running' 
-                      ? 'bg-green-600 text-white' 
-                      : 'bg-red-600 text-white'
-                  }`}>
-                    {camera.status || 'Unknown'}
-                  </span>
-                </div>
-                <p className="text-sm text-gray-400">ID: {camera.id}</p>
-                <p className="text-sm text-gray-400">Location: {camera.location || 'N/A'}</p>
-              </div>
-            ))}
-          </div>
-          
-          {cameras.length === 0 && (
-            <div className="text-center py-8">
-              <p className="text-gray-400">No cameras available.</p>
-            </div>
-          )}
-        </Card>
+        </div>
       </div>
     </Layout>
   );

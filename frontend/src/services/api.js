@@ -12,6 +12,7 @@ class ApiService {
         'Content-Type': 'application/json',
         ...options.headers,
       },
+      credentials: 'include', // Include cookies in all requests
       ...options,
     };
 
@@ -34,19 +35,9 @@ class ApiService {
     }
   }
 
+  // All requests now use the same method since authentication is handled by cookies
   async authenticatedRequest(endpoint, options = {}) {
-    const token = localStorage.getItem('authToken');
-    if (!token) {
-      throw new Error('No authentication token found');
-    }
-
-    return this.request(endpoint, {
-      ...options,
-      headers: {
-        ...options.headers,
-        'Authorization': `Bearer ${token}`,
-      },
-    });
+    return this.request(endpoint, options);
   }
 
   // Auth endpoints
@@ -64,7 +55,14 @@ class ApiService {
     });
   }
 
-  // User endpoints - FIXED: Updated to match backend endpoints
+  // Logout endpoint to clear the httpOnly cookie
+  async logout() {
+    return this.request('/auth/logout', {
+      method: 'POST',
+    });
+  }
+
+  // User endpoints - Cookie-based authentication
   async getCurrentUser() {
     return this.authenticatedRequest('/me');
   }
@@ -77,7 +75,7 @@ class ApiService {
     return this.authenticatedRequest('/employee/me/status');
   }
 
-  // User management - FIXED: Updated to correct backend endpoints
+  // User management endpoints
   async getAllUsers() {
     return this.authenticatedRequest('/superadmin/users');
   }
@@ -109,7 +107,7 @@ class ApiService {
     });
   }
 
-  // Face management endpoints - FIXED: Updated to correct backend endpoints
+  // Face management endpoints
   async getUserFaces(userId) {
     return this.authenticatedRequest(`/admin/faces/${userId}`);
   }
@@ -119,12 +117,9 @@ class ApiService {
     // Backend expects multiple files with 'images' field name
     imageFiles.forEach(file => formData.append('images', file));
 
-    const token = localStorage.getItem('authToken');
     return fetch(`${this.baseURL}/admin/faces/enroll/${userId}`, {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
+      credentials: 'include', // Include cookies for authentication
       body: formData,
     }).then(response => {
       if (!response.ok) {
@@ -140,7 +135,7 @@ class ApiService {
     });
   }
 
-  // Profile picture helper - NEW: Implementation for profile pictures
+  // Profile picture helper
   async getUserProfilePicture(userId) {
     try {
       const faces = await this.getUserFaces(userId);
@@ -246,27 +241,25 @@ class ApiService {
     return this.authenticatedRequest('/superadmin/settings');
   }
 
-  // Attendance logs - UPDATED: Check if endpoint exists in backend
+  // Attendance logs
   async getAllAttendanceLogs() {
-    // Note: Verify this endpoint exists in backend
-    // May need to be implemented in backend if missing
     return this.authenticatedRequest('/admin/attendance');
   }
 
-  // Multi-camera WebSocket helper
-  createVideoWebSocket(cameraId, token) {
-    const wsUrl = `ws://localhost:8000/ws/video_feed/${cameraId}?token=${token}`;
+  // Multi-camera WebSocket helper - Updated for cookie-based auth
+  createVideoWebSocket(cameraId) {
+    // Cookies are automatically sent with WebSocket connections to the same domain
+    const wsUrl = `ws://localhost:8000/ws/video_feed/${cameraId}`;
     return new WebSocket(wsUrl);
   }
 
   // Batch operations for multi-camera support
   async getMultipleCameraFeeds(cameraIds) {
-    const token = localStorage.getItem('authToken');
     const connections = [];
     
     cameraIds.forEach(cameraId => {
       if (cameraId) {
-        const ws = this.createVideoWebSocket(cameraId, token);
+        const ws = this.createVideoWebSocket(cameraId);
         connections.push({ cameraId, ws });
       }
     });

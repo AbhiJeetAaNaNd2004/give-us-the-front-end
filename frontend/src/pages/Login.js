@@ -5,7 +5,7 @@ import Input from '../components/UI/Input';
 import Card from '../components/UI/Card';
 import LoadingSpinner from '../components/UI/LoadingSpinner';
 import apiService from '../services/api';
-import { setAuthData } from '../utils/auth';
+import { setUserRole } from '../utils/auth';
 import { handleApiError } from '../utils/helpers';
 
 const Login = () => {
@@ -32,8 +32,15 @@ const Login = () => {
 
     try {
       const response = await apiService.login(formData.username, formData.password);
-      setAuthData(response.access_token, response.role);
-      navigate('/dashboard');
+      
+      // With cookie-based auth, we only store the user role
+      // The JWT token is automatically stored in an httpOnly cookie by the browser
+      if (response.status === 'success') {
+        setUserRole(response.role);
+        navigate('/dashboard');
+      } else {
+        setError('Login failed. Please try again.');
+      }
     } catch (err) {
       setError(handleApiError(err, 'Login failed. Please check your credentials.'));
     } finally {

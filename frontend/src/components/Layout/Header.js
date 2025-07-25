@@ -1,15 +1,25 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Button from '../UI/Button';
-import { getUserRole, clearAuthData } from '../../utils/auth';
+import { getUserRole, clearUserRole } from '../../utils/auth';
+import apiService from '../../services/api';
 
 const Header = ({ title, subtitle }) => {
   const navigate = useNavigate();
   const userRole = getUserRole();
 
-  const handleLogout = () => {
-    clearAuthData();
-    navigate('/login');
+  const handleLogout = async () => {
+    try {
+      // Call backend logout endpoint to clear the httpOnly cookie
+      await apiService.logout();
+    } catch (error) {
+      console.warn('Logout API call failed:', error);
+      // Continue with logout even if API call fails
+    } finally {
+      // Clear user role from localStorage and redirect
+      clearUserRole();
+      navigate('/login');
+    }
   };
 
   const getRoleDisplayName = (role) => {

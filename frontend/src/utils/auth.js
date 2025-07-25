@@ -1,23 +1,22 @@
-export const getAuthToken = () => {
-  return localStorage.getItem('authToken');
-};
+// Updated auth utilities for httpOnly cookie-based authentication
+// Tokens are now handled automatically by the browser via secure cookies
 
 export const getUserRole = () => {
   return localStorage.getItem('userRole');
 };
 
-export const setAuthData = (token, role) => {
-  localStorage.setItem('authToken', token);
+export const setUserRole = (role) => {
   localStorage.setItem('userRole', role);
 };
 
-export const clearAuthData = () => {
-  localStorage.removeItem('authToken');
+export const clearUserRole = () => {
   localStorage.removeItem('userRole');
 };
 
+// Authentication status is determined by the presence of user role
+// The actual authentication is handled by httpOnly cookies
 export const isAuthenticated = () => {
-  return !!getAuthToken();
+  return !!getUserRole();
 };
 
 export const hasRole = (requiredRole) => {
