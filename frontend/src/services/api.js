@@ -64,32 +64,40 @@ class ApiService {
     });
   }
 
-  // User endpoints
+  // User endpoints - FIXED: Updated to match backend endpoints
   async getCurrentUser() {
     return this.authenticatedRequest('/me');
   }
 
   async getUserAttendance() {
-    return this.authenticatedRequest('/me/attendance');
+    return this.authenticatedRequest('/employee/me/attendance');
   }
 
   async getUserStatus() {
-    return this.authenticatedRequest('/me/status');
+    return this.authenticatedRequest('/employee/me/status');
   }
 
+  // User management - FIXED: Updated to correct backend endpoints
   async getAllUsers() {
-    return this.authenticatedRequest('/users');
+    return this.authenticatedRequest('/superadmin/users');
   }
 
-  async createUser(userData) {
-    return this.authenticatedRequest('/users', {
+  async createEmployee(userData) {
+    return this.authenticatedRequest('/admin/users/create/employee', {
+      method: 'POST',
+      body: JSON.stringify(userData),
+    });
+  }
+
+  async createAdmin(userData) {
+    return this.authenticatedRequest('/superadmin/users/create/admin', {
       method: 'POST',
       body: JSON.stringify(userData),
     });
   }
 
   async deleteUser(userId) {
-    return this.authenticatedRequest(`/users/${userId}`, {
+    return this.authenticatedRequest(`/superadmin/users/${userId}`, {
       method: 'DELETE',
     });
   }
@@ -101,17 +109,18 @@ class ApiService {
     });
   }
 
-  // Face management endpoints
+  // Face management endpoints - FIXED: Updated to correct backend endpoints
   async getUserFaces(userId) {
-    return this.authenticatedRequest(`/users/${userId}/faces`);
+    return this.authenticatedRequest(`/admin/faces/${userId}`);
   }
 
-  async enrollFace(userId, imageFile) {
+  async enrollFaces(userId, imageFiles) {
     const formData = new FormData();
-    formData.append('file', imageFile);
+    // Backend expects multiple files with 'images' field name
+    imageFiles.forEach(file => formData.append('images', file));
 
     const token = localStorage.getItem('authToken');
-    return fetch(`${this.baseURL}/users/${userId}/faces`, {
+    return fetch(`${this.baseURL}/admin/faces/enroll/${userId}`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
@@ -125,10 +134,32 @@ class ApiService {
     });
   }
 
-  async deleteFace(userId, faceId) {
-    return this.authenticatedRequest(`/users/${userId}/faces/${faceId}`, {
+  async deleteFaceEmbedding(embeddingId) {
+    return this.authenticatedRequest(`/admin/faces/${embeddingId}`, {
       method: 'DELETE',
     });
+  }
+
+  // Profile picture helper - NEW: Implementation for profile pictures
+  async getUserProfilePicture(userId) {
+    try {
+      const faces = await this.getUserFaces(userId);
+      if (faces && faces.length > 0) {
+        // Convert bytes to base64 for display
+        const imageBytes = faces[0].source_image;
+        // Handle different data formats
+        if (typeof imageBytes === 'string') {
+          return `data:image/jpeg;base64,${imageBytes}`;
+        } else if (imageBytes instanceof ArrayBuffer || Array.isArray(imageBytes)) {
+          const base64String = btoa(String.fromCharCode(...new Uint8Array(imageBytes)));
+          return `data:image/jpeg;base64,${base64String}`;
+        }
+      }
+      return null; // No profile picture available
+    } catch (error) {
+      console.warn(`Could not load profile picture for user ${userId}:`, error);
+      return null;
+    }
   }
 
   // Camera endpoints
@@ -157,30 +188,30 @@ class ApiService {
   }
 
   async startCamera(cameraId) {
-    return this.authenticatedRequest(`/cameras/${cameraId}/start`, {
+    return this.authenticatedRequest(`/superadmin/cameras/${cameraId}/start`, {
       method: 'POST',
     });
   }
 
   async stopCamera(cameraId) {
-    return this.authenticatedRequest(`/cameras/${cameraId}/stop`, {
+    return this.authenticatedRequest(`/superadmin/cameras/${cameraId}/stop`, {
       method: 'POST',
     });
   }
 
   // Tracker endpoints
   async getTrackerStatus() {
-    return this.authenticatedRequest('/tracker/status');
+    return this.authenticatedRequest('/superadmin/tracker/status');
   }
 
   async startTracker() {
-    return this.authenticatedRequest('/tracker/start', {
+    return this.authenticatedRequest('/superadmin/tracker/start', {
       method: 'POST',
     });
   }
 
   async stopTracker() {
-    return this.authenticatedRequest('/tracker/stop', {
+    return this.authenticatedRequest('/superadmin/tracker/stop', {
       method: 'POST',
     });
   }
@@ -215,9 +246,32 @@ class ApiService {
     return this.authenticatedRequest('/superadmin/settings');
   }
 
-  // Attendance logs
+  // Attendance logs - UPDATED: Check if endpoint exists in backend
   async getAllAttendanceLogs() {
+    // Note: Verify this endpoint exists in backend
+    // May need to be implemented in backend if missing
     return this.authenticatedRequest('/admin/attendance');
+  }
+
+  // Multi-camera WebSocket helper
+  createVideoWebSocket(cameraId, token) {
+    const wsUrl = `ws://localhost:8000/ws/video_feed/${cameraId}?token=${token}`;
+    return new WebSocket(wsUrl);
+  }
+
+  // Batch operations for multi-camera support
+  async getMultipleCameraFeeds(cameraIds) {
+    const token = localStorage.getItem('authToken');
+    const connections = [];
+    
+    cameraIds.forEach(cameraId => {
+      if (cameraId) {
+        const ws = this.createVideoWebSocket(cameraId, token);
+        connections.push({ cameraId, ws });
+      }
+    });
+    
+    return connections;
   }
 }
 
